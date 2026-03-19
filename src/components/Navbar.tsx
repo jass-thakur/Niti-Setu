@@ -118,10 +118,10 @@ const Navbar = () => {
           <div className="container flex items-center justify-between h-20 sm:h-24">
             {/* Logo & Title */}
             <div className="flex items-center gap-1 cursor-pointer shrink-0" onClick={() => navigate("/")}>
-              <span className="font-display font-bold text-2xl sm:text-3xl text-gradient">Niti-Setu</span>
+              <span className="font-display font-bold text-2xl sm:text-3xl text-gradient">AgriVani</span>
               <img 
                 src="/logo.png" 
-                alt="Niti-Setu Logo" 
+                alt="AgriVani Logo" 
                 className="w-16 h-16 sm:w-20 sm:h-20 object-contain" 
               />
             </div>

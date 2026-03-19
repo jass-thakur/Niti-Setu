@@ -1,6 +1,9 @@
 import { CheckCircle2, XCircle, FileText, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 
+/**
+ * Interface representing the data structure for a government scheme.
+ */
 export interface SchemeData {
   id: string;
   name: string;
@@ -15,12 +18,19 @@ export interface SchemeData {
   documents: string[];
 }
 
+/**
+ * Properties for the SchemeCard component.
+ */
 interface SchemeCardProps {
   scheme: SchemeData;
   onViewDetails: (scheme: SchemeData) => void;
   index: number;
 }
 
+/**
+ * SchemeCard component displays a summary of a government scheme,
+ * including eligibility status and key benefits.
+ */
 const SchemeCard = ({ scheme, onViewDetails, index }: SchemeCardProps) => {
   return (
     <motion.div

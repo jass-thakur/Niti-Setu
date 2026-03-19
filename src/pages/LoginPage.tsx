@@ -7,9 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
-import { MapPin, User, Calendar, LucideIcon } from "lucide-react";
+import { MapPin, User, Calendar, LucideIcon, Mic, MicOff, Sparkles, Volume2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { indianStates } from "@/data/mockData";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import VoiceInput from "@/components/VoiceInput";
+import { useEffect, useRef } from "react";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -29,6 +32,95 @@ const LoginPage = () => {
     category: "",
     landSize: ""
   });
+
+  const [isAssistantActive, setIsAssistantActive] = useState(false);
+  const [assistantStep, setAssistantStep] = useState(0); // 0: Start, 1: Name, 2: Age, 3: Gender, 4: State, 5: Land, 6: Category, 7: Done
+  const assistantSteps = [
+    { field: "name", question: "What is your full name?", prompt: "Please say your name clearly." },
+    { field: "age", question: "How old are you?", prompt: "Say your age in years." },
+    { field: "gender", question: "Are you Male or Female?", prompt: "Say Male or Female." },
+    { field: "state", question: "Which state are you from?", prompt: "Say your state name." },
+    { field: "landSize", question: "How many acres of land do you have?", prompt: "Specify land in acres." },
+    { field: "category", question: "What is your social category?", prompt: "Say General, OBC, SC or ST." }
+  ];
+
+  const speak = (text: string, callback?: () => void) => {
+    const synth = window.speechSynthesis;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-IN";
+    utterance.rate = 0.9;
+    utterance.onend = () => callback?.();
+    synth.speak(utterance);
+  };
+
+  const { isListening, transcript, toggleListening, stopListening, startListening } = useSpeechRecognition({
+    onResult: (text) => {
+      if (!isAssistantActive) return;
+      handleAssistantResult(text);
+    }
+  });
+
+  const handleAssistantResult = (text: string) => {
+    const step = assistantSteps[assistantStep - 1];
+    if (!step) return;
+
+    const lowerText = text.toLowerCase();
+    const newProfile = { ...profile };
+
+    if (step.field === "name") {
+      // Remove prefixes like "my name is", "call me", "i am", "this is", "myself"
+      const cleaned = text.replace(/^(my name is|i am|name is|this is|call me|myself|i'm)\s+/i, "").trim();
+      if (cleaned) newProfile.name = cleaned;
+    } else if (step.field === "age") {
+      const num = text.match(/\d+/);
+      if (num) newProfile.age = num[0];
+    } else if (step.field === "landSize") {
+      const num = text.match(/\d+(?:\.\d+)?/);
+      if (num) newProfile.landSize = num[0];
+    } else if (step.field === "gender") {
+      if (lowerText.includes("male") || lowerText.includes("man")) newProfile.gender = "Male";
+      else if (lowerText.includes("female") || lowerText.includes("woman")) newProfile.gender = "Female";
+    } else if (step.field === "state") {
+      const found = indianStates.find(s => lowerText.includes(s.toLowerCase()));
+      if (found) newProfile.state = found;
+    } else if (step.field === "category") {
+      if (lowerText.includes("general")) newProfile.category = "General";
+      else if (lowerText.includes("obc")) newProfile.category = "OBC";
+      else if (lowerText.includes("sc") || lowerText.includes("s.c")) newProfile.category = "SC";
+      else if (lowerText.includes("st") || lowerText.includes("s.t")) newProfile.category = "ST";
+    }
+
+    setProfile(newProfile);
+    stopListening();
+    
+    // Move to next step
+    if (assistantStep < assistantSteps.length) {
+      setTimeout(() => proceedToNextStep(assistantStep + 1), 500);
+    } else {
+      speak("Thank you! Your profile is ready. Please check if everything is correct and click complete.");
+      setIsAssistantActive(false);
+      setAssistantStep(0);
+    }
+  };
+
+  const proceedToNextStep = (stepIdx: number) => {
+    setAssistantStep(stepIdx);
+    const step = assistantSteps[stepIdx - 1];
+    if (step) {
+      speak(step.question, () => {
+        // Longer delay to ensure audio hardware switch is complete
+        setTimeout(() => startListening(), 800);
+      });
+    }
+  };
+
+  const startAssistant = () => {
+    setIsAssistantActive(true);
+    speak("Namaste! I am your AgriVani Assistant. I will help you fill your form. Let's start. What is your full name?", () => {
+      setAssistantStep(1);
+      setTimeout(() => startListening(), 800);
+    });
+  };
 
   const handleSendOTP = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +172,7 @@ const LoginPage = () => {
       navigate("/");
       toast({
         title: "Registration Complete",
-        description: `Welcome to Niti-Setu, ${profile.name}!`,
+        description: `Welcome to AgriVani, ${profile.name}!`,
       });
       setIsSubmitting(false);
     }, 1000);
@@ -88,7 +180,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-background">
-      {/* Left Column: Branding (WOW factor) */}
+      {/* Left Column: Branding */}
       <div className="hidden md:flex flex-1 relative overflow-hidden bg-primary items-center justify-center p-12">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80')] bg-cover bg-center mix-blend-overlay opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/80 to-primary-dark" />
@@ -100,10 +192,10 @@ const LoginPage = () => {
             transition={{ duration: 0.8 }}
           >
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20">
-                <Sprout className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 overflow-hidden">
+                <img src="/logo.png" alt="AgriVani Logo" className="w-full h-full object-contain" />
               </div>
-              <span className="text-4xl font-display font-bold tracking-tight">Niti-Setu</span>
+              <span className="text-4xl font-display font-bold tracking-tight">AgriVani</span>
             </div>
             
             <h1 className="text-5xl font-display font-bold leading-tight mb-6">
@@ -134,12 +226,12 @@ const LoginPage = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary-dark/50 rounded-full blur-[120px]" />
       </div>
 
-      {/* Right Column: Login Form */}
+      {/* Right Column: Entrance / Login Flow */}
       <div className="flex-[0.8] flex items-center justify-center p-6 sm:p-12 bg-background relative overflow-hidden">
         {/* Mobile Header */}
         <div className="absolute top-8 left-8 flex items-center gap-2 md:hidden">
-          <Sprout className="w-6 h-6 text-primary" />
-          <span className="text-xl font-display font-bold text-gradient">Niti-Setu</span>
+          <img src="/logo.png" alt="AgriVani Logo" className="w-8 h-8 object-contain" />
+          <span className="text-xl font-display font-bold text-gradient">AgriVani</span>
         </div>
 
         <motion.div 
@@ -149,7 +241,11 @@ const LoginPage = () => {
         >
           <div className="text-center md:text-left">
             <h2 className="text-3xl font-display font-bold text-foreground">Welcome Back</h2>
-            <p className="text-muted-foreground mt-2">Enter your phone number to access your dashboard</p>
+            <p className="text-muted-foreground mt-2">
+              {step === 3 
+                ? (isAssistantActive ? `Assistant: ${assistantSteps[assistantStep-1]?.question || "Processing..."}` : "Complete your profile. Use the voice assistant for help!") 
+                : "Enter your phone number to access your dashboard"}
+            </p>
           </div>
 
           <div className="bg-card glass-card p-8 rounded-3xl border border-border/50 shadow-xl shadow-black/5 relative overflow-hidden group">
@@ -166,7 +262,7 @@ const LoginPage = () => {
                     <Input
                       type="tel"
                       placeholder="98765 43210"
-                      className="pl-20 h-14 rounded-xl border-border bg-background focus-visible:ring-primary focus-visible:border-primary transition-all text-lg font-medium"
+                      className="pl-20 h-14 rounded-xl border-border bg-background focus-visible:ring-primary transition-all text-lg font-medium"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                       required
@@ -178,9 +274,7 @@ const LoginPage = () => {
                   disabled={isSubmitting || phone.length < 10}
                   className="w-full h-14 rounded-xl text-lg font-bold bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all group/btn"
                 >
-                  {isSubmitting ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
+                  {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (
                     <>
                       Get Security Code
                       <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -208,12 +302,7 @@ const LoginPage = () => {
                       />
                     </div>
                   </div>
-                  
-                  <button 
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="text-xs font-bold text-primary hover:underline block mx-auto py-2"
-                  >
+                  <button type="button" onClick={() => setStep(1)} className="text-xs font-bold text-primary hover:underline block mx-auto py-2">
                     Change Number
                   </button>
                 </div>
@@ -222,9 +311,7 @@ const LoginPage = () => {
                   disabled={isSubmitting || otp.length < 4}
                   className="w-full h-14 rounded-xl text-lg font-bold bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all group/btn"
                 >
-                  {isSubmitting ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
+                  {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (
                     <>
                       Verify & Continue
                       <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -235,28 +322,71 @@ const LoginPage = () => {
             ) : (
               <form onSubmit={handleCompleteProfile} className="space-y-5">
                 <div className="space-y-4">
+                  {/* Voice Assistant Section */}
+                  <div className={`rounded-2xl p-6 border transition-all duration-500 mb-6 ${isAssistantActive ? "bg-primary text-white border-primary shadow-2xl scale-[1.02]" : "bg-primary/5 border-primary/10 text-foreground"}`}>
+                    <div className="flex flex-col items-center gap-4 text-center">
+                      <div className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500 ${isListening ? "bg-white text-primary animate-pulse ring-8 ring-white/20" : isAssistantActive ? "bg-white/90 text-primary" : "bg-primary/20 text-primary"}`}>
+                        {isListening ? <Mic className="w-10 h-10" /> : <Volume2 className="w-10 h-10" />}
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold mb-1">
+                          {isListening ? "Listening to you..." : isAssistantActive ? "Assistant is Speaking..." : "AgriVani Voice Assistant"}
+                        </h3>
+                        <p className={`text-sm ${isAssistantActive ? "text-white/80" : "text-muted-foreground"}`}>
+                          {isAssistantActive 
+                            ? (isListening ? (transcript ? `You said: "${transcript}"` : assistantSteps[assistantStep-1]?.prompt) : `Question: ${assistantSteps[assistantStep-1]?.question || "Welcome"}`)
+                            : "Click to fill the entire form by speaking with our assistant"}
+                        </p>
+                        {isListening && transcript && (
+                          <div className="mt-2 text-xs bg-white/20 backdrop-blur-md px-3 py-1 rounded-full animate-in fade-in slide-in-from-bottom-1 inline-block">
+                            Parsing: {assistantSteps[assistantStep-1]?.field}
+                          </div>
+                        )}
+                      </div>
+                      <Button 
+                        type="button"
+                        onClick={isAssistantActive ? () => setIsAssistantActive(false) : startAssistant}
+                        size="lg"
+                        className={`h-14 rounded-full px-8 text-lg font-bold shadow-xl transition-all ${isAssistantActive ? "bg-white text-destructive hover:bg-white/90" : "bg-primary text-white"}`}
+                      >
+                        {isAssistantActive ? (
+                          <>
+                            <MicOff className="w-6 h-6 mr-2" />
+                            Stop Assistant
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-6 h-6 mr-2" />
+                            Start Voice Assistant
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Form Fields Section */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                    <div className={`space-y-1.5 p-3 rounded-xl transition-all ${assistantStep === 1 ? "bg-primary/10 ring-2 ring-primary" : ""}`}>
                       <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Full Name</label>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <User className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${assistantStep === 1 ? "text-primary" : "text-muted-foreground"}`} />
                         <Input 
                           placeholder="Your Name" 
-                          className="pl-9 h-11 rounded-lg border-border"
+                          className={`pl-9 h-11 rounded-lg border-border transition-all ${assistantStep === 1 ? "ring-2 ring-primary/20 bg-primary/5 border-primary/50" : ""}`}
                           value={profile.name}
                           onChange={(e) => setProfile({...profile, name: e.target.value})}
                           required
                         />
                       </div>
                     </div>
-                    <div className="space-y-1.5">
+                    <div className={`space-y-1.5 p-3 rounded-xl transition-all ${assistantStep === 2 ? "bg-primary/10 ring-2 ring-primary" : ""}`}>
                       <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Age</label>
                       <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Calendar className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${assistantStep === 2 ? "text-primary" : "text-muted-foreground"}`} />
                         <Input 
                           type="number" 
                           placeholder="Years" 
-                          className="pl-9 h-11 rounded-lg border-border"
+                          className={`pl-9 h-11 rounded-lg border-border transition-all ${assistantStep === 2 ? "ring-2 ring-primary/20 bg-primary/5 border-primary/50" : ""}`}
                           value={profile.age}
                           onChange={(e) => setProfile({...profile, age: e.target.value})}
                           required
@@ -266,10 +396,10 @@ const LoginPage = () => {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                    <div className={`space-y-1.5 p-3 rounded-xl transition-all ${assistantStep === 3 ? "bg-primary/10 ring-2 ring-primary" : ""}`}>
                       <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Gender</label>
                       <Select value={profile.gender} onValueChange={(v) => setProfile({...profile, gender: v})} required>
-                        <SelectTrigger className="h-11 rounded-lg border-border">
+                        <SelectTrigger className={`h-11 rounded-lg border-border transition-all ${assistantStep === 3 ? "ring-2 ring-primary/20 bg-primary/5 border-primary/50" : ""}`}>
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent className="bg-card border-border">
@@ -279,13 +409,13 @@ const LoginPage = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="space-y-1.5">
+                    <div className={`space-y-1.5 p-3 rounded-xl transition-all ${assistantStep === 5 ? "bg-primary/10 ring-2 ring-primary" : ""}`}>
                       <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Land Size (Acres)</label>
                       <Input 
                         type="number" 
                         step="0.1"
                         placeholder="e.g. 2.5" 
-                        className="h-11 rounded-lg border-border"
+                        className={`h-11 rounded-lg border-border transition-all ${assistantStep === 5 ? "ring-2 ring-primary/20 bg-primary/5 border-primary/50" : ""}`}
                         value={profile.landSize}
                         onChange={(e) => setProfile({...profile, landSize: e.target.value})}
                         required
@@ -293,10 +423,10 @@ const LoginPage = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className={`space-y-1.5 p-3 rounded-xl transition-all ${assistantStep === 4 ? "bg-primary/10 ring-2 ring-primary" : ""}`}>
                     <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">State</label>
                     <Select value={profile.state} onValueChange={(v) => setProfile({...profile, state: v})} required>
-                      <SelectTrigger className="h-11 rounded-lg border-border">
+                      <SelectTrigger className={`h-11 rounded-lg border-border transition-all ${assistantStep === 4 ? "ring-2 ring-primary/20 bg-primary/5 border-primary/50" : ""}`}>
                         <SelectValue placeholder="Select State" />
                       </SelectTrigger>
                       <SelectContent className="bg-card border-border max-h-48">
@@ -307,10 +437,10 @@ const LoginPage = () => {
                     </Select>
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className={`space-y-1.5 p-3 rounded-xl transition-all ${assistantStep === 6 ? "bg-primary/10 ring-2 ring-primary" : ""}`}>
                     <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Category</label>
                     <Select value={profile.category} onValueChange={(v) => setProfile({...profile, category: v})} required>
-                      <SelectTrigger className="h-11 rounded-lg border-border">
+                      <SelectTrigger className={`h-11 rounded-lg border-border transition-all ${assistantStep === 6 ? "ring-2 ring-primary/20 bg-primary/5 border-primary/50" : ""}`}>
                         <SelectValue placeholder="Social Category" />
                       </SelectTrigger>
                       <SelectContent className="bg-card border-border">
@@ -325,7 +455,7 @@ const LoginPage = () => {
 
                 <Button 
                   disabled={isSubmitting}
-                  className="w-full h-12 rounded-xl text-md font-bold bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all mt-2"
+                  className="w-full h-12 rounded-xl text-md font-bold bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all mt-4"
                 >
                   {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Complete My Profile"}
                 </Button>

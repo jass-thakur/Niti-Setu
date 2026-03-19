@@ -1,73 +1,68 @@
-# Welcome to your Lovable project
+# AgriVani: AI-Powered Scheme Eligibility Assistant
 
-## Project info
+AgriVani is a modern platform designed to bridge the gap between farmers and government schemes. By leveraging AI, voice input, and an intuitive dashboard, it helps farmers discover schemes they are eligible for in seconds, providing clear citations and document requirements.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🌟 Key Features
 
-## How can I edit this code?
+- **AI-Driven Eligibility**: Instantly check eligibility for various government schemes based on farmer profiles.
+- **Voice-Powered Input**: Simple, accessible voice-to-text interface for farmers to provide their details easily.
+- **AI Chatbot (AgriVani Assistant)**: A dedicated AI assistant to answer questions about specific schemes like PM-KISAN, PM-KUSUM, and more.
+- **Comprehensive Scheme Database**: Deep integration with major agricultural schemes including insurance, subsidies, and loans.
+- **Document Citations**: Every eligibility result comes with specific citations from official scheme documents to ensure transparency and trust.
+- **Social Category & Landholding Awareness**: Tailored results based on specific criteria like caste categories and land holding sizes.
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+- **Frontend**: React (with TypeScript)
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Animations**: Framer Motion
+- **State Management**: React Query (TanStack Query)
+- **Icons**: Lucide React
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🚀 Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- npm or bun
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Clone the repository**
+   ```sh
+   git clone <YOUR_GIT_URL>
+   cd scheme-buddy-main
+   ```
 
-Follow these steps:
+2. **Install dependencies**
+   ```sh
+   npm install
+   # or if you prefer bun
+   bun install
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. **Start the development server**
+   ```sh
+   npm run dev
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🏗️ How It Works
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. **Farmer Profile**: Users enter details such as state, district, land size, and crop type through manual entry or voice commands.
+2. **AI Analysis**: The platform matches the profile against a comprehensive set of eligibility rules and official documentation.
+3. **Insights Dashboard**: Farmers receive a personalized dashboard showing "Eligible" and "Ineligible" schemes, along with the "Reason" and "Proof" for each.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## 📝 Supported Schemes (Partial List)
 
-**Edit a file directly in GitHub**
+- **PM-KISAN**: Income support for small and marginal farmers.
+- **PM-KUSUM**: Solar pump subsidies.
+- **Pradhan Mantri Fasal Bima Yojana (PMFBY)**: Comprehensive crop insurance.
+- **Kisan Credit Card (KCC)**: Easy credit for agricultural needs.
+- **National Bamboo Mission**: Support for bamboo plantation.
+- ...and many more!
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+*Built with ❤️ for the Indian Farming Community.*

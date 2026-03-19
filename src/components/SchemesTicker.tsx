@@ -1,5 +1,9 @@
 import { motion } from "framer-motion";
 
+/**
+ * Mock data for the schemes ticker.
+ * Represents recent news and updates related to government schemes.
+ */
 const schemes = [
   "📢 PM-Kisan Samman Nidhi: 17th Installment released for 9.26 crore farmers!",
   "✨ New: PM-KUSUM Subsidy increased to 60% in Rajasthan & MP.",
@@ -8,6 +12,10 @@ const schemes = [
   "💧 Per Drop More Crop: Micro-irrigation equipment subsidy available now."
 ];
 
+/**
+ * SchemesTicker component displays a scrolling marquee of latest scheme updates.
+ * Uses framer-motion for smooth, infinite loop animation.
+ */
 const SchemesTicker = () => {
   return (
     <div className="bg-primary/10 border-b border-primary/20 py-1.5 overflow-hidden whitespace-nowrap sticky top-0 z-50">

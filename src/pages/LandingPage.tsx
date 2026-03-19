@@ -29,7 +29,7 @@ const LandingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-6xl font-display font-bold text-foreground leading-tight"
           >
-            Niti-Setu{" "}
+            AgriVani{" "}
             <span className="text-gradient">AI Scheme Eligibility</span>{" "}
             Assistant
           </motion.h1>

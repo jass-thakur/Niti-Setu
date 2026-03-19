@@ -14,8 +14,8 @@ const Footer = () => {
               className="flex items-center gap-1 cursor-pointer w-fit" 
               onClick={() => navigate("/")}
             >
-              <span className="font-display font-bold text-2xl text-gradient">Niti-Setu</span>
-              <img src="/logo.png" alt="Niti-Setu Logo" className="w-10 h-10 object-contain" />
+              <span className="font-display font-bold text-2xl text-gradient">AgriVani</span>
+              <img src="/logo.png" alt="AgriVani Logo" className="w-10 h-10 object-contain" />
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
               Bridging the gap between farmers and government opportunities through AI-powered 
@@ -96,13 +96,13 @@ const Footer = () => {
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                   <Mail className="w-4 h-4 text-primary" />
                 </div>
-                <span>support@nitisetu.gov.in</span>
+                <span>support@agrivani.gov.in</span>
               </li>
               <li className="flex items-center gap-3 text-sm text-muted-foreground">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                   <Phone className="w-4 h-4 text-primary" />
                 </div>
-                <span>1800-SETU-2026</span>
+                <span>1800-AGRI-2026</span>
               </li>
               <li className="flex items-center gap-3 text-sm text-muted-foreground">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -117,7 +117,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-muted-foreground">
-            © 2026 Niti-Setu. Powering the Digital India Mission.
+            © 2026 AgriVani. Powering the Digital India Mission.
           </p>
           <div className="flex items-center gap-6">
             <a href="#" className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">

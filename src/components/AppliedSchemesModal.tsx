@@ -4,11 +4,18 @@ import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 
+/**
+ * Properties for the AppliedSchemesModal component.
+ */
 interface AppliedSchemesModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean; // Controls whether the modal is visible
+  onClose: () => void; // Function to call when closing the modal
 }
 
+/**
+ * AppliedSchemesModal component displays a list of schemes the user has already applied for.
+ * It retrieves the data from the AuthContext and shows status updates.
+ */
 const AppliedSchemesModal: React.FC<AppliedSchemesModalProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
   const schemes = user?.appliedSchemes || [];

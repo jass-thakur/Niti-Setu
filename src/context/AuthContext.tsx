@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     // Simulate checking local storage for existing session
-    const savedUser = localStorage.getItem("niti_setu_user");
+    const savedUser = localStorage.getItem("agrivani_user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -41,14 +41,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = (phone: string, profile: Partial<User> = {}) => {
     const newUser = { id: "1", phone, name: profile.name || "Farmer", ...profile };
     setUser(newUser);
-    localStorage.setItem("niti_setu_user", JSON.stringify(newUser));
+    localStorage.setItem("agrivani_user", JSON.stringify(newUser));
   };
 
   const updateProfile = (profile: Partial<User>) => {
     if (!user) return;
     const updatedUser = { ...user, ...profile };
     setUser(updatedUser);
-    localStorage.setItem("niti_setu_user", JSON.stringify(updatedUser));
+    localStorage.setItem("agrivani_user", JSON.stringify(updatedUser));
   };
 
   const applyToScheme = (scheme: { id: string; name: string }) => {
@@ -64,7 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("niti_setu_user");
+    localStorage.removeItem("agrivani_user");
   };
 
   return (

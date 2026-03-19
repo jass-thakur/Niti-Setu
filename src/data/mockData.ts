@@ -1,5 +1,9 @@
 import { SchemeData } from "@/components/SchemeCard";
 
+/**
+ * Comprehensive list of mock schemes for demonstration purposes.
+ * Each entry includes eligibility rules, benefits, and required documents.
+ */
 export const mockSchemes: SchemeData[] = [
   {
     id: "1",
@@ -165,6 +169,9 @@ export const mockSchemes: SchemeData[] = [
   },
 ];
 
+/**
+ * List of all Indian States for location-based filtering/selection.
+ */
 export const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
   "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
@@ -174,6 +181,10 @@ export const indianStates = [
   "Uttar Pradesh", "Uttarakhand", "West Bengal",
 ];
 
+/**
+ * Mapping of Indian States to their respective major districts.
+ * Used for cascading selection in forms.
+ */
 export const districtsByState: Record<string, string[]> = {
   "Uttar Pradesh": ["Lucknow", "Varanasi", "Agra", "Kanpur", "Prayagraj"],
   "Maharashtra": ["Pune", "Nagpur", "Nashik", "Aurangabad", "Mumbai Suburban"],

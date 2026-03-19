@@ -8,6 +8,10 @@ interface Message {
   sender: "user" | "ai";
 }
 
+/**
+ * Mock responses for the AgriVani assistant.
+ * Contains predefined answers for common scheme-related keywords.
+ */
 const mockResponses: Record<string, string> = {
   default:
     "I can help you check scheme eligibility. Try asking about PM-Kisan, PM-KUSUM, or soil health cards!",
@@ -19,6 +23,11 @@ const mockResponses: Record<string, string> = {
     "The **Soil Health Card** scheme helps you understand your soil's nutrient status so you can use the right amount of fertilizer.",
 };
 
+/**
+ * Simple keyword matching function to determine the AI's response.
+ * @param input - The user's input string.
+ * @returns The matching response or a default message.
+ */
 const getResponse = (input: string): string => {
   const lower = input.toLowerCase();
   if (lower.includes("kisan")) return mockResponses["pm-kisan"];
@@ -27,19 +36,30 @@ const getResponse = (input: string): string => {
   return mockResponses.default;
 };
 
+/**
+ * ChatWidget component provides a floating chat assistant for users.
+ * Supports basic interactivity with mock responses and smooth scrolling.
+ */
 const ChatWidget = () => {
+  // --- UI State ---
   const [isOpen, setIsOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { id: 0, text: "Namaste! 🙏 I am your Niti-Setu assistant. How can I help you today?", sender: "ai" },
+    { id: 0, text: "Namaste! 🙏 I am your AgriVani assistant. How can I help you today?", sender: "ai" },
   ]);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // --- Side Effects ---
+  // Automatically scroll to the bottom when new messages arrive or while typing
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  /**
+   * Handles sending messages.
+   * Updates state with user message and triggers a delayed mock response.
+   */
   const send = () => {
     if (!input.trim() || isTyping) return;
     const userMsg: Message = { id: Date.now(), text: input, sender: "user" };
@@ -78,7 +98,7 @@ const ChatWidget = () => {
                 <Bot className="text-white w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-display font-semibold text-primary-foreground">Niti-Setu Assistant</h3>
+                <h3 className="font-display font-semibold text-primary-foreground">AgriVani Assistant</h3>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   <span className="text-[10px] text-primary-foreground/80 uppercase tracking-widest font-bold">Online</span>

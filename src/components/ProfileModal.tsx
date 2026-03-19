@@ -39,7 +39,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               </div>
               <div>
                 <h2 className="text-xl font-display font-bold text-foreground">Farmer Profile</h2>
-                <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Verified Niti-Setu Member</p>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Verified AgriVani Member</p>
               </div>
             </div>
             <button 

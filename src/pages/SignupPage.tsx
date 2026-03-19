@@ -36,11 +36,11 @@ const SignupPage = () => {
     setIsSubmitting(true);
     // Simulate API call
     setTimeout(() => {
-      login(formData.phone, formData.name);
+      login(formData.phone, { name: formData.name, state: formData.state });
       navigate("/");
       toast({
         title: "Registration Successful",
-        description: `Welcome to Niti-Setu, ${formData.name}!`,
+        description: `Welcome to AgriVani, ${formData.name}!`,
       });
       setIsSubmitting(false);
     }, 1500);
@@ -60,10 +60,10 @@ const SignupPage = () => {
             transition={{ duration: 0.8 }}
           >
             <Link to="/" className="inline-flex items-center gap-3 mb-12 hover:opacity-80 transition-opacity">
-              <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20">
-                <Sprout className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 overflow-hidden">
+                <img src="/logo.png" alt="AgriVani Logo" className="w-full h-full object-contain" />
               </div>
-              <span className="text-3xl font-display font-bold tracking-tight">Niti-Setu</span>
+              <span className="text-3xl font-display font-bold tracking-tight">AgriVani</span>
             </Link>
             
             <h1 className="text-5xl font-display font-bold leading-tight mb-8">
